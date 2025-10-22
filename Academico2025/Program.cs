@@ -1,7 +1,14 @@
+using Academico2025.Data;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddControllersWithViews();
+
+//Conexão com o Banco
+var connectionString = builder.Configuration.GetConnectionString("MinhaConnection");
+builder.Services.AddDbContext<Academico2025Context>(options => options.UseSqlServer(connectionString));
 
 var app = builder.Build();
 
