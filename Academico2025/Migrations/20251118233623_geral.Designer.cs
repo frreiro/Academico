@@ -11,8 +11,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Academico2025.Migrations
 {
     [DbContext(typeof(Academico2025Context))]
-    [Migration("20251111225518_departamentos-email")]
-    partial class departamentosemail
+    [Migration("20251118233623_geral")]
+    partial class geral
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -68,7 +68,14 @@ namespace Academico2025.Migrations
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
+                    b.Property<int>("InstituicaoId")
+                        .HasColumnType("int");
+
                     b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("NomeCoordenador")
                         .IsRequired()
                         .HasColumnType("nvarchar(max)");
 
@@ -78,7 +85,41 @@ namespace Academico2025.Migrations
 
                     b.HasKey("Id");
 
+                    b.HasIndex("InstituicaoId");
+
                     b.ToTable("Departamentos");
+                });
+
+            modelBuilder.Entity("Academico2025.Models.Instituicao", b =>
+                {
+                    b.Property<int>("InstituicaoId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("InstituicaoId"));
+
+                    b.Property<string>("Nome")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<string>("Telefone")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("InstituicaoId");
+
+                    b.ToTable("Instituicoes");
+                });
+
+            modelBuilder.Entity("Academico2025.Models.Departamento", b =>
+                {
+                    b.HasOne("Academico2025.Models.Instituicao", "Instituicao")
+                        .WithMany()
+                        .HasForeignKey("InstituicaoId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Instituicao");
                 });
 #pragma warning restore 612, 618
         }

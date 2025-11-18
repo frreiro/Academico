@@ -22,7 +22,8 @@ namespace Academico2025.Controllers
         // GET: Departamento
         public async Task<IActionResult> Index()
         {
-            return View(await _context.Departamentos.ToListAsync());
+            var academico2025Context = _context.Departamentos.Include(d => d.Instituicao);
+            return View(await academico2025Context.ToListAsync());
         }
 
         // GET: Departamento/Details/5
@@ -34,6 +35,7 @@ namespace Academico2025.Controllers
             }
 
             var departamento = await _context.Departamentos
+                .Include(d => d.Instituicao)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (departamento == null)
             {
@@ -46,6 +48,7 @@ namespace Academico2025.Controllers
         // GET: Departamento/Create
         public IActionResult Create()
         {
+            ViewData["InstituicaoId"] = new SelectList(_context.Instituicoes, "InstituicaoId", "InstituicaoId");
             return View();
         }
 
@@ -54,7 +57,7 @@ namespace Academico2025.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Create([Bind("Id,Nome,Telefone,Email,InstuicaoId")] Departamento departamento)
+        public async Task<IActionResult> Create([Bind("Id,Nome,Telefone,Email,InstituicaoId,NomeCoordenador")] Departamento departamento)
         {
             if (ModelState.IsValid)
             {
@@ -62,6 +65,7 @@ namespace Academico2025.Controllers
                 await _context.SaveChangesAsync();
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["InstituicaoId"] = new SelectList(_context.Instituicoes, "InstituicaoId", "InstituicaoId", departamento.InstituicaoId);
             return View(departamento);
         }
 
@@ -78,6 +82,7 @@ namespace Academico2025.Controllers
             {
                 return NotFound();
             }
+            ViewData["InstituicaoId"] = new SelectList(_context.Instituicoes, "InstituicaoId", "InstituicaoId", departamento.InstituicaoId);
             return View(departamento);
         }
 
@@ -86,7 +91,7 @@ namespace Academico2025.Controllers
         // For more details, see http://go.microsoft.com/fwlink/?LinkId=317598.
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telefone,Email,InstuicaoId")] Departamento departamento)
+        public async Task<IActionResult> Edit(int id, [Bind("Id,Nome,Telefone,Email,InstituicaoId,NomeCoordenador")] Departamento departamento)
         {
             if (id != departamento.Id)
             {
@@ -113,6 +118,7 @@ namespace Academico2025.Controllers
                 }
                 return RedirectToAction(nameof(Index));
             }
+            ViewData["InstituicaoId"] = new SelectList(_context.Instituicoes, "InstituicaoId", "InstituicaoId", departamento.InstituicaoId);
             return View(departamento);
         }
 
@@ -125,6 +131,7 @@ namespace Academico2025.Controllers
             }
 
             var departamento = await _context.Departamentos
+                .Include(d => d.Instituicao)
                 .FirstOrDefaultAsync(m => m.Id == id);
             if (departamento == null)
             {
